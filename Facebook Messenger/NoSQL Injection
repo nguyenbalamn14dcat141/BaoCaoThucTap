@@ -1,0 +1,49 @@
+Ở đề tài này, em dùng Framework Meteor trên NodeJS để lập trình một ứng dụng chat real-time có đăng nhập/đăng ký & ngăn chặn được cuộc tấn công NoSQL Injection vào MongoDB. Đây cũng là mục tiêu của đề tài thực tập tốt nghiệp của em.
+	
+	- Meteor là một Fullstack Framework mới được xây dựng dựa trên core là NodeJS, sử dụng hệ quản trị cơ sở dữ liệu chính là MongoDB. Có bao gồm các ngôn ngữ Front-end React cũng như Blaze.
+	- Meteor có cộng đồng mạnh từ cộng đồng NodeJS, hỗ trợ hệ sinh thái đa dạng gồm nhiều module, best practice.
+
+Các loại tấn công NoSQL Injection trên MongoDB:
+
+	1. Chuyển định dạng string thành biểu thức điều kiện
+	
+	Bắt đầu với truy vấn trên MongoDB
+
+		db.usersdata.find({ username: "nguyenbalam", password: "123456"})
+
+	được xem như một truy vấn bình thường và tìm thấy kết quả.
+
+	Tuy nhiên, hacker có thể thay thế bằng một Biểu thức logic thay vì String, thường dùng nhất là "&ne" với ý nghĩa not equals.
+
+		Mongo.usersCollection.find({ username: {$ne: ""}, password: {$ne: ""}})
+
+	Truy vấn này luôn trả về tất cả các row trong collection mà có username và password lớn hơn rỗng. Điều này thật sự rất nguy hiểm!
+
+	Để ngăn chặn điều này, chúng ta cần:
+		
+		- Đọc dữ liệu vào theo định dạng String. Framework Meteor mặc định tất cả các input text nhập vào đều ở định dạng String.
+		- Một lần nữa kiểm tra tất cả dữ liệu nhập vào từ người dùng. Framework Meteor cung cấp một module rất mạnh đó là check. Nó có thể kiểm tra xem dữ liệu bạn đưa vào có phải dự liệu bạn mong muốn hay không.
+
+		VD: check(username, String)
+		Function này sẽ xuất hiện Exception nếu như username không phải là String và không cho chạy đoạn code phía sau. Nếu username là String thì tiếp tục chạy như bình thường.
+
+	2. Nối chuỗi trong query
+
+	Nếu như dev viết một câu truy vấn dạng này:
+
+		var string query = “{ username: ‘“ + user + “’, password: ‘” + password + “’ }”
+
+	Đây rõ ràng có thể thực hiện tương tự như SQL Injection mà chúng ta đã được học. Nếu:
+
+		username = admin’, $or: [ {}, { ‘a’:’a
+		password = ’ } ], $comment:’hacked’
+
+	thì câu query sẽ trở thành
+
+		{ username: ‘admin’ , $or: [ {}, { ‘a’: ‘a’, password: ‘’ } ], $comment: ‘hacked’ }
+
+	Và hacker đã bypass thành công bước Authentication.
+
+	Tương tự như phần 1, chúng ta cần quy định cứng dữ liệu nhập vào & một lần nữa kiểm tra chúng.
+
+Ngoài ra, hãy sử dụng thư viện Publish/Subcribe mà Meteor cung cấp. Publish/Subcribe giúp bạn quản lý dữ liệu được truyền từ server & nhận tại client. Chỉ truyền những thứ cần thiết đến client, không truyền tất cả. Điều này giúp giảm thiểu được nguy cơ bị khai thác dữ liệu sau khi cuộc tấn công NoSQL Injection.
