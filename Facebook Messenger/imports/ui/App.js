@@ -26,7 +26,7 @@ class App extends Component {
         $('.username').focus();
       }
       else{
-        var username = ReactDOM.findDOMNode(this.refs.userName).value.trim(); // Lay gia tri cua o text o dang String
+        var username = ReactDOM.findDOMNode(this.refs.userName).value.trim(); // React  tự động hộ trợ Lay gia tri cua o text o dang String
         var password = ReactDOM.findDOMNode(this.refs.passWord).value.trim();
         check(username, String); // Kiem tra username/password nhap vao co phai la String hay khong? 
         check(password, String);
@@ -146,7 +146,7 @@ class App extends Component {
                 <div className="row-content">
                     <section className="message">
                         <div className="grid-message">
-                            {this.renderChatMessages()}
+                            {this.renderChatMessages()}// gọi hàm render ở trên
                         </div>
                     </section>
                 </div>
@@ -184,8 +184,8 @@ export default withTracker(() => { //Dùng subcribe tại client để nhận Co
   Meteor.subscribe('groupsdata');
   Meteor.subscribe('messagesdata', Session.get('currentRoom'));
   return {
-    groupsdata: groupsCollection.find({}, { sort: { name: 1 }}).fetch(),
-    messagesdata: messagesCollection.find().fetch(),
-    currentUser: Session.get('currentUser')
+    groupsdata: groupsCollection.find({}, { sort: { name: 1 }}).fetch(), //lấy du liệu data tư server sắp xep theo ten
+    messagesdata: messagesCollection.find().fetch(), // 
+    currentUser: Session.get('currentUser')// lay session ơ server de biet user hien tai
   };
 })(App);

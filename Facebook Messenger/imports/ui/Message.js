@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 
-export default class Message extends Component {
+export default class Message extends Component {// quản lý  Render messeger
   	render() {
-  		if (this.props.currentUser && this.props.message.username === this.props.currentUser){
+  		if (this.props.currentUser && this.props.message.username === this.props.currentUser){ //
 	  		return (
 	    		<div className="col-message-sent">
 					<div className="message-sent">

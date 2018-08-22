@@ -15,7 +15,7 @@ Các loại tấn công NoSQL Injection trên MongoDB:
 
 	Tuy nhiên, hacker có thể thay thế bằng một Biểu thức logic thay vì String, thường dùng nhất là "&ne" với ý nghĩa not equals.
 
-		Mongo.usersCollection.find({ username: {$ne: ""}, password: {$ne: ""}})
+		Mongo.usersCollection.find({ username: {"$ne": ""}, password: {"$ne": ""}})
 
 	Truy vấn này luôn trả về tất cả các row trong collection mà có username và password lớn hơn rỗng. Điều này thật sự rất nguy hiểm!
 
@@ -46,4 +46,9 @@ Các loại tấn công NoSQL Injection trên MongoDB:
 
 	Tương tự như phần 1, chúng ta cần quy định cứng dữ liệu nhập vào & một lần nữa kiểm tra chúng.
 
-Ngoài ra, hãy sử dụng thư viện Publish/Subcribe mà Meteor cung cấp. Publish/Subcribe giúp bạn quản lý dữ liệu được truyền từ server & nhận tại client. Chỉ truyền những thứ cần thiết đến client, không truyền tất cả. Điều này giúp giảm thiểu được nguy cơ bị khai thác dữ liệu sau khi cuộc tấn công NoSQL Injection.
+Ngoài ra, hãy sử dụng thư viện Publish/Subcribe mà Meteor cung cấp. Publish/Subcribe giúp bạn quản lý dữ liệu được truyền từ server & nhận tại client. Chỉ truyền những thứ cần thiết đến client, không truyền tất cả. Điều này giúp giảm thiểu được nguy cơ bị khai thác dữ liệu sau khi cuộc tấn công NoSQL Injection
+
+trong frameword Meteor tự đọng hỗ trợ lấy các giá trị ở dạng string.
+
+Thông thường kẻ tấn công sẽ gửi những request chứa JSON có vẻ hợp lệ nhưng phần value không phải dạng string mà là dạng biểu thức khi đó chúng ta cần phải check lại những  value trong Json gì mình nhận được
+bằng hàm check();
